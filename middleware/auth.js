@@ -1,4 +1,3 @@
-// auth.js
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
@@ -18,13 +17,13 @@ exports.protect = async (req, res, next) => {
     const user = await User.findById(decoded.id);
 
     if (!user) {
-      return res.status(401).json({ message: 'No user found with this ID' });
+      return res.status(401).json({ message: 'User not found' });
     }
 
     req.user = user;
     next();
   } catch (err) {
     console.error('Auth middleware error:', err);
-    return res.status(401).json({ message: 'Not authorized to access this route' });
+    res.status(401).json({ message: 'Invalid token' });
   }
 };
