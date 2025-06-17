@@ -8,6 +8,22 @@ exports.getAllMcqTypes = async (req, res) => {
         res.status(500).json({ message: 'Server error fetching MCQ types.' });
     }
 };
+exports.getMcqTypeById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const mcqType = await McqType.findById(id);
+
+    if (!mcqType) {
+      return res.status(404).json({ message: 'MCQ type not found.' });
+    }
+
+    res.status(200).json(mcqType);
+  } catch (error) {
+    console.error('Error fetching MCQ type by ID:', error);
+    res.status(500).json({ message: 'Server error fetching MCQ type by ID.' });
+  }
+};
 
 exports.createMcqType = async (req, res) => {
     const { name, description, imageUrl } = req.body;

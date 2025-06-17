@@ -6,6 +6,7 @@ const mcqController = require('../controllers/mcqController');
 
 // Get all MCQ types
 router.get('/mcqtypes', mcqController.getAllMcqTypes);
+router.get('/mcq-types/:id', mcqController.getMcqTypeById);
 
 // Create a new MCQ type
 router.post('/mcqtypes', mcqController.createMcqType);
