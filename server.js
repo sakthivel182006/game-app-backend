@@ -8,7 +8,7 @@ const authRoutes = require('./routes/userRoutes');
 const mcqRoutes = require('./routes/mcqRoutes');
 const mcqquestionRoutes = require('./routes/mcqQuestionRoutes');
 const testRoutes = require('./routes/testRoutes');
-const paymentRoutes = require('./routes/paymentRoutes.js');
+
 
 dotenv.config();
 connectDB();
@@ -35,7 +35,7 @@ app.get('/', (req, res) => {
 app.use('/api', authRoutes);
 app.use('/api', mcqRoutes);
 app.use('/api', testRoutes);
-app.use('/api/payment', paymentRoutes);
+
 app.use('/api/mcqquestion', mcqquestionRoutes);
 
 // Error handling middleware
