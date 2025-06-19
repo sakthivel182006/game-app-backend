@@ -34,22 +34,80 @@ exports.registerUser = async (req, res) => {
       otpExpires,
     });
 
-    await user.save();
-
+   // Prepare email content
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: `"Crack Quiz With Sakthi" <${process.env.EMAIL_USER}>`,
       to: email,
-      subject: 'Your OTP for Registration',
+      subject: 'Welcome to Crack Quiz With Sakthi - Verify Your Account',
       html: `
-        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-          <h2>Hello ${username},</h2>
-          <p>Thank you for registering with us. Please use the following One-Time Password (OTP) to complete your registration:</p>
-          <p style="font-size: 24px; font-weight: bold; color: #007bff; text-align: center;">${otp}</p>
-          <p>This OTP is valid for 10 minutes.</p>
-          <p>If you did not request this, please ignore this email.</p>
-          <p>Best regards,<br/>Your App Team</p>
+        <div style="max-width: 600px; margin: 0 auto; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+          <!-- Header with Branding -->
+          <div style="background: linear-gradient(135deg, #6e48aa 0%, #9d50bb 100%); padding: 30px 20px; text-align: center;">
+            <h1 style="color: white; margin: 0; font-size: 28px;">Crack Quiz With Sakthi</h1>
+            <p style="color: rgba(255,255,255,0.8); margin: 5px 0 0; font-size: 16px;">Expand Your Knowledge Horizons</p>
+          </div>
+          
+          <!-- Email Content -->
+          <div style="padding: 30px 25px;">
+            <h2 style="color: #333; margin-top: 0;">Welcome ${username}!</h2>
+            <p style="color: #555; font-size: 16px; line-height: 1.6;">Thank you for joining our community of knowledge seekers! We're excited to have you on board.</p>
+            
+            <!-- OTP Section -->
+            <div style="background: #f8f9fa; border-radius: 8px; padding: 15px; text-align: center; margin: 25px 0; border: 1px dashed #6e48aa;">
+              <p style="margin: 0; font-size: 14px; color: #666;">Your verification code:</p>
+              <div style="font-size: 32px; font-weight: bold; letter-spacing: 3px; color: #6e48aa; margin: 10px 0;">${otp}</div>
+              <p style="margin: 0; font-size: 12px; color: #ff6b6b;">Valid for 10 minutes only</p>
+            </div>
+            
+            <!-- Website Features -->
+            <div style="margin: 25px 0;">
+              <h3 style="color: #6e48aa; margin-bottom: 15px;">Start Your Knowledge Journey:</h3>
+              <div style="display: flex; margin-bottom: 15px;">
+                <div style="flex: 1; padding: 10px; background: #f9f5ff; border-radius: 5px; margin-right: 10px;">
+                  <p style="font-weight: bold; color: #6e48aa; margin: 0 0 5px 0;">📚 Diverse Quizzes</p>
+                  <p style="margin: 0; font-size: 14px; color: #555;">Test your knowledge across various subjects</p>
+                </div>
+                <div style="flex: 1; padding: 10px; background: #f9f5ff; border-radius: 5px;">
+                  <p style="font-weight: bold; color: #6e48aa; margin: 0 0 5px 0;">🏆 Earn Badges</p>
+                  <p style="margin: 0; font-size: 14px; color: #555;">Get recognized for your achievements</p>
+                </div>
+              </div>
+              <div style="display: flex;">
+                <div style="flex: 1; padding: 10px; background: #f9f5ff; border-radius: 5px; margin-right: 10px;">
+                  <p style="font-weight: bold; color: #6e48aa; margin: 0 0 5px 0;">📊 Track Progress</p>
+                  <p style="margin: 0; font-size: 14px; color: #555;">Monitor your learning journey</p>
+                </div>
+                <div style="flex: 1; padding: 10px; background: #f9f5ff; border-radius: 5px;">
+                  <p style="font-weight: bold; color: #6e48aa; margin: 0 0 5px 0;">👥 Community</p>
+                  <p style="margin: 0; font-size: 14px; color: #555;">Compete with fellow learners</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Call to Action -->
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="https://crackquizwithsakthi.vercel.app" style="display: inline-block; background: #6e48aa; color: white; padding: 12px 25px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 16px; margin-bottom: 15px;">Start Quizzing Now</a>
+              <p style="color: #888; font-size: 14px;">Verify your account and dive into our quiz collection!</p>
+            </div>
+            
+            <!-- Footer -->
+            <div style="border-top: 1px solid #eee; padding-top: 20px; margin-top: 20px;">
+              <p style="color: #888; font-size: 14px; line-height: 1.5;">If you didn't request this code, please ignore this email or contact support if you have concerns.</p>
+              <p style="color: #888; font-size: 14px; margin-bottom: 0;">Happy Learning!<br><strong>The Crack Quiz With Sakthi Team</strong></p>
+            </div>
+          </div>
+          
+          <!-- Bottom Bar -->
+          <div style="background: #f5f5f5; padding: 15px; text-align: center; font-size: 12px; color: #888;">
+            <p style="margin: 0;">© ${new Date().getFullYear()} Crack Quiz With Sakthi. All rights reserved.</p>
+            <p style="margin: 5px 0 0;">
+              <a href="https://crackquizwithsakthi.vercel.app" style="color: #6e48aa; text-decoration: none;">Home</a> | 
+              <a href="https://crackquizwithsakthi.vercel.app/privacy" style="color: #6e48aa; text-decoration: none;">Privacy Policy</a> | 
+              <a href="https://crackquizwithsakthi.vercel.app/contact" style="color: #6e48aa; text-decoration: none;">Contact Us</a>
+            </p>
+          </div>
         </div>
-      `,
+      `
     };
 
     await transporter.sendMail(mailOptions);
@@ -69,7 +127,7 @@ exports.registerUser = async (req, res) => {
 // @desc    Verify OTP
 // @route   POST /api/auth/verify-otp
 // @access  Public
-exports.verifyOTP = async (req, res) => {
+ exports.verifyOTP = async (req, res) => {
   const { userId, otp } = req.body;
 
   try {
@@ -87,23 +145,139 @@ exports.verifyOTP = async (req, res) => {
       return res.status(400).json({ message: 'OTP expired' });
     }
 
+    // Update user verification status
     user.isVerified = true;
     user.otp = undefined;
     user.otpExpires = undefined;
     await user.save();
 
-    res.status(200).json({ message: 'Account verified successfully! You can now log in.' });
+    // Send thank you email
+    const mailOptions = {
+      from: `"Crack Quiz With Sakthi" <${process.env.EMAIL_USER}>`,
+      to: user.email,
+      subject: '🎉 Welcome Aboard! Your Account is Now Verified',
+      html: `
+        <div style="max-width: 600px; margin: 0 auto; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+          <!-- Header with Branding -->
+          <div style="background: linear-gradient(135deg, #6e48aa 0%, #9d50bb 100%); padding: 30px 20px; text-align: center; color: white;">
+            <h1 style="margin: 0; font-size: 28px;">Welcome to Crack Quiz With Sakthi!</h1>
+            <p style="margin: 5px 0 0; font-size: 16px; opacity: 0.9;">Your Knowledge Journey Begins Now</p>
+          </div>
+          
+          <!-- Email Content -->
+          <div style="padding: 30px 25px;">
+            <h2 style="color: #333; margin-top: 0;">Hello ${user.username},</h2>
+            <p style="color: #555; font-size: 16px; line-height: 1.6;">
+              Thank you for verifying your account! We're thrilled to have you as part of our learning community.
+            </p>
+            
+            <!-- Celebration Section -->
+            <div style="text-align: center; margin: 25px 0;">
+              <div style="font-size: 48px;">🎉</div>
+              <h3 style="color: #6e48aa;">Your account is now fully activated!</h3>
+            </div>
+            
+            <!-- Getting Started -->
+            <div style="background: #f8f9fa; border-radius: 8px; padding: 20px; margin: 25px 0;">
+              <h4 style="color: #6e48aa; margin-top: 0;">Get Started:</h4>
+              <ol style="padding-left: 20px; margin-bottom: 0;">
+                <li style="margin-bottom: 8px;">Explore our quiz categories</li>
+                <li style="margin-bottom: 8px;">Take your first quiz</li>
+                <li style="margin-bottom: 8px;">Track your progress in your dashboard</li>
+                <li>Earn badges and achievements</li>
+              </ol>
+            </div>
+            
+            <!-- Website Features -->
+            <div style="margin: 30px 0;">
+              <h3 style="color: #6e48aa; text-align: center; margin-bottom: 20px;">Why You'll Love Crack Quiz With Sakthi</h3>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div style="background: #f9f5ff; padding: 15px; border-radius: 8px;">
+                  <p style="font-weight: bold; color: #6e48aa; margin: 0 0 5px 0;">📚 1000+ MCQs</p>
+                  <p style="margin: 0; font-size: 14px; color: #555;">Comprehensive question bank</p>
+                </div>
+                <div style="background: #f9f5ff; padding: 15px; border-radius: 8px;">
+                  <p style="font-weight: bold; color: #6e48aa; margin: 0 0 5px 0;">📊 Detailed Analytics</p>
+                  <p style="margin: 0; font-size: 14px; color: #555;">Track your strengths & weaknesses</p>
+                </div>
+                <div style="background: #f9f5ff; padding: 15px; border-radius: 8px;">
+                  <p style="font-weight: bold; color: #6e48aa; margin: 0 0 5px 0;">🏆 Leaderboards</p>
+                  <p style="margin: 0; font-size: 14px; color: #555;">Compete with other learners</p>
+                </div>
+                <div style="background: #f9f5ff; padding: 15px; border-radius: 8px;">
+                  <p style="font-weight: bold; color: #6e48aa; margin: 0 0 5px 0;">📱 Mobile Friendly</p>
+                  <p style="margin: 0; font-size: 14px; color: #555;">Learn anywhere, anytime</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Call to Action -->
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="https://crackquizwithsakthi.vercel.app/login" style="display: inline-block; background: #6e48aa; color: white; padding: 12px 30px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 16px;">Start Learning Now</a>
+            </div>
+            
+            <!-- Footer -->
+            <div style="border-top: 1px solid #eee; padding-top: 20px; margin-top: 20px; text-align: center;">
+              <p style="color: #888; font-size: 14px; margin-bottom: 5px;">Need help or have questions?</p>
+              <p style="color: #888; font-size: 14px; margin: 0;">
+                Contact us at <a href="mailto:support@crackquizwithsakthi.vercel.app" style="color: #6e48aa;">support@crackquizwithsakthi.vercel.app</a>
+              </p>
+            </div>
+          </div>
+          
+          <!-- Bottom Bar -->
+          <div style="background: #f5f5f5; padding: 15px; text-align: center; font-size: 12px; color: #888;">
+            <p style="margin: 0;">© ${new Date().getFullYear()} Crack Quiz With Sakthi. All rights reserved.</p>
+            <p style="margin: 5px 0 0;">
+              <a href="https://crackquizwithsakthi.vercel.app" style="color: #6e48aa; text-decoration: none;">Home</a> | 
+              <a href="https://crackquizwithsakthi.vercel.app/privacy" style="color: #6e48aa; text-decoration: none;">Privacy Policy</a> | 
+              <a href="https://crackquizwithsakthi.vercel.app/contact" style="color: #6e48aa; text-decoration: none;">Contact Us</a>
+            </p>
+          </div>
+        </div>
+      `
+    };
+
+    // Send email (don't await to speed up response)
+    transporter.sendMail(mailOptions)
+      .then(() => console.log(`Thank you email sent to ${user.email}`))
+      .catch(err => console.error('Error sending thank you email:', err));
+
+    // Send response
+    res.status(200).json({
+      success: true,
+      message: 'Account verified successfully!',
+      data: {
+        userId: user._id,
+        email: user.email,
+        username: user.username,
+        website: {
+          name: 'Crack Quiz With Sakthi',
+          url: 'https://crackquizwithsakthi.vercel.app',
+          features: [
+            'Comprehensive MCQ collection',
+            'Detailed performance analytics',
+            'Personalized learning paths',
+            'Competitive exam preparation'
+          ],
+          loginUrl: 'https://crackquizwithsakthi.vercel.app/login'
+        }
+      }
+    });
 
   } catch (error) {
     console.error('OTP verification error:', error);
-    res.status(500).json({ message: 'Server error during OTP verification', error: error.message });
+    res.status(500).json({
+      success: false,
+      message: 'Server error during OTP verification',
+      error: error.message
+    });
   }
 };
-
 // @desc    Login user
 // @route   POST /api/auth/login
 // @access  Public
-exports.loginUser = async (req, res) => {
+  exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
