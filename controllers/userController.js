@@ -34,6 +34,8 @@ exports.registerUser = async (req, res) => {
       otpExpires,
     });
 
+    await user.save();
+
    // Prepare email content
     const mailOptions = {
       from: `"Crack Quiz With Sakthi" <${process.env.EMAIL_USER}>`,
