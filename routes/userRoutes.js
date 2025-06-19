@@ -7,7 +7,10 @@ const {
   getUserProfile,
   updateUserProfile,
   updatePassword,
-  uploadProfileImage
+  uploadProfileImage,
+  getAllUsers,
+  updateUser,
+  deleteUser
 } = require('../controllers/userController');
 const { protect } = require('../middleware/auth');
 const upload = require('../config/multer');
@@ -19,6 +22,12 @@ router.post('/auth/login', loginUser);
 // User Profile Routes (Protected)
 router.route('/user/profile')
   .get(protect, getUserProfile);
+
+router.get('/getallusers',getAllUsers);
+
+router.put('/updateuser/:id',updateUser);
+
+router.delete('/deleteuser/:id',deleteUser);
 
 router.route('/user/profile/update')
   .put(protect, updateUserProfile);

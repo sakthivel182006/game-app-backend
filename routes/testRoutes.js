@@ -6,7 +6,11 @@ const {
   getSubmissionById,
   updateSubmission,
   deleteSubmission,
-  calculateEarningsDistribution
+  calculateEarningsDistribution,
+  getAllSubmissionsbyadminside,
+  getSubmissionBymcqtypeid,
+  getSubmissiondetailsbothuseridandmcqtypeid,
+  getSubmissionByIdadminside
 } = require('../controllers/testSubmissionController');
 
 // ✅ POST: Submit a test
@@ -17,15 +21,27 @@ router.post('/api/testsubmissions/api/submit/test', submitTest);
 // URL: /api/testsubmissions/
 router.get('/', getAllSubmissions);
 
+
+router.get('/getall', getAllSubmissionsbyadminside);
+
+
 router.get('/calculate-earnings', calculateEarningsDistribution);
 
 // ✅ GET: Fetch submission by ID
 // URL: /api/testsubmissions/:id
+
 router.get('/loginbyuserid/:userId', getSubmissionById);
+
+router.get('/loginbyuseridbyadminside/:userId', getSubmissionByIdadminside);
+
+router.get('/mcqtypeid/:mcqTypeId', getSubmissionBymcqtypeid);
+
+
+router.get('/submissiondetailsbothuseridandmcqtypeidmatched/:userId/:mcqTypeId', getSubmissiondetailsbothuseridandmcqtypeid);
 
 // ✅ PUT: Update a submission by ID
 // URL: /api/testsubmissions/:id
-router.put('/:id', updateSubmission);
+router.put('/update/submission:id', updateSubmission);
 
 // ✅ DELETE: Remove a submission by ID
 // URL: /api/testsubmissions/:id

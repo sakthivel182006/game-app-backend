@@ -47,6 +47,16 @@ exports.getAllSubmissions = async (req, res) => {
   }
 };
 
+exports.getAllSubmissionsbyadminside = async (req, res) => {
+  try {
+    const submissions = await TestSubmission.find();
+    res.json(submissions);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
 exports.getSubmissionById = async (req, res) => {
   try {
     const userId = req.params.userId;
@@ -69,6 +79,82 @@ exports.getSubmissionById = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+
+exports.getSubmissionByIdadminside = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    // Convert userId string to ObjectId
+    const objectUserId = new mongoose.Types.ObjectId(userId);
+
+    // Find all submissions for the given user without populating mcqTypeId
+    const submissions = await TestSubmission.find({ userId: objectUserId })
+
+    if (!submissions || submissions.length === 0) {
+      return res.status(404).json({ error: 'No submissions found for this user' });
+    }
+
+    res.status(200).json(submissions);
+
+  } catch (err) {
+    console.error('Error fetching submission by userId:', err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.getSubmissionBymcqtypeid = async (req, res) => {
+  try {
+    const mcqTypeId = req.params.mcqTypeId;
+
+    let query = {};
+
+    // Safely check if it is a valid ObjectId
+    if (mongoose.Types.ObjectId.isValid(mcqTypeId)) {
+      query.mcqTypeId = new mongoose.Types.ObjectId(mcqTypeId);
+    } else {
+      // If not valid ObjectId, just use it as-is (assuming it's stored as a string)
+      query.mcqTypeId = mcqTypeId;
+    }
+
+    const submissions = await TestSubmission.find(query);
+
+    if (!submissions || submissions.length === 0) {
+      return res.status(404).json({ error: 'No submissions found for this mcqTypeId' });
+    }
+
+    res.status(200).json(submissions);
+  } catch (err) {
+    console.error('Error fetching submission by mcqTypeId:', err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.getSubmissiondetailsbothuseridandmcqtypeid = async (req, res) => {
+  try {
+    const { userId, mcqTypeId } = req.params;
+
+    // Convert to ObjectId if stored as ObjectId in DB
+    const objectUserId = new mongoose.Types.ObjectId(userId);
+    const objectMcqTypeId = new mongoose.Types.ObjectId(mcqTypeId);
+
+    // Find submissions where both userId and mcqTypeId match
+    const submissions = await TestSubmission.find({
+      userId: objectUserId,
+      mcqTypeId: objectMcqTypeId
+    });
+
+    if (!submissions || submissions.length === 0) {
+      return res.status(404).json({ error: 'No submissions found for this user and mcqTypeId combination' });
+    }
+
+    res.status(200).json(submissions);
+  } catch (err) {
+    console.error('Error fetching submissions by userId and mcqTypeId:', err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
 
 // PUT update submission
 exports.updateSubmission = async (req, res) => {
@@ -231,3 +317,6 @@ exports.calculateEarningsDistribution = async (req, res) => {
     });
   }
 };
+
+
+
