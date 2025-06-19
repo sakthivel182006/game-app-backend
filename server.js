@@ -2,12 +2,16 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const path = require('path');
+const bodyParser = require('body-parser');
 const fs = require('fs');
+
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/userRoutes');
 const mcqRoutes = require('./routes/mcqRoutes');
 const mcqquestionRoutes = require('./routes/mcqQuestionRoutes');
 const testRoutes = require('./routes/testRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
+const useramountdistributionroutes = require('./routes/userAmountRoutes');
 
 
 dotenv.config();
@@ -15,42 +19,41 @@ connectDB();
 
 const app = express();
 
-// Create uploads directory if it doesn't exist
+// ===== CORS MIDDLEWARE =====
+app.use(cors({
+  origin: '*', // Use specific frontend URL in production
+  credentials: true
+}));
+
+// ===== Middleware =====
+app.use(express.json());
+app.use(bodyParser.json());
+
+// ===== Create uploads directory if it doesn't exist =====
 const uploadDir = path.join(__dirname, 'public/uploads');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
   console.log('Uploads directory created successfully');
 }
 
-// Middleware
-app.use(express.json());
-app.use(cors());
-app.use(express.static(path.join(__dirname, 'public'))); // Serve static files
+// ===== Serve static files =====
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Routes
+// ===== Routes =====
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
+app.use('/api', useramountdistributionroutes);
+app.use('/api', paymentRoutes);
 app.use('/api', authRoutes);
 app.use('/api', mcqRoutes);
-app.use('/api', testRoutes);
-
+app.use('/api/testsubmissions', testRoutes);
 app.use('/api/mcqquestion', mcqquestionRoutes);
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ 
-    success: false,
-    message: 'Something broke!',
-    error: err.message 
-  });
-});
 
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`Uploads directory: ${uploadDir}`);
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`📁 Uploads directory: ${uploadDir}`);
 });

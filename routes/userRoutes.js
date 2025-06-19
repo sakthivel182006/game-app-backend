@@ -12,7 +12,6 @@ const {
 const { protect } = require('../middleware/auth');
 const upload = require('../config/multer');
 
-// Authentication Routes
 router.post('/auth/register', registerUser);
 router.post('/auth/verify-otp', verifyOTP);
 router.post('/auth/login', loginUser);

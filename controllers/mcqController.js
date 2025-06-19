@@ -8,28 +8,28 @@ exports.getAllMcqTypes = async (req, res) => {
         res.status(500).json({ message: 'Server error fetching MCQ types.' });
     }
 };
+
 exports.getMcqTypeById = async (req, res) => {
-  const { id } = req.params;
+    const { id } = req.params;
 
-  try {
-    const mcqType = await McqType.findById(id);
+    try {
+        const mcqType = await McqType.findById(id);
 
-    if (!mcqType) {
-      return res.status(404).json({ message: 'MCQ type not found.' });
+        if (!mcqType) {
+            return res.status(404).json({ message: 'MCQ type not found.' });
+        }
+
+        res.status(200).json(mcqType);
+    } catch (error) {
+        console.error('Error fetching MCQ type by ID:', error);
+        res.status(500).json({ message: 'Server error fetching MCQ type by ID.' });
     }
-
-    res.status(200).json(mcqType);
-  } catch (error) {
-    console.error('Error fetching MCQ type by ID:', error);
-    res.status(500).json({ message: 'Server error fetching MCQ type by ID.' });
-  }
 };
-
 exports.createMcqType = async (req, res) => {
-    const { name, description, imageUrl } = req.body;
+    const { name, description, imageUrl, entryFee, startTimeBeforeStart, dueTimeBeforeStart } = req.body;
 
-    if (!name) {
-        return res.status(400).json({ message: 'MCQ type name is required.' });
+    if (!name || !startTimeBeforeStart || !dueTimeBeforeStart) {
+        return res.status(400).json({ message: 'Name, start time, and due time are required.' });
     }
 
     try {
@@ -38,23 +38,38 @@ exports.createMcqType = async (req, res) => {
             return res.status(409).json({ message: 'An MCQ type with this name already exists.' });
         }
 
-        const newMcqType = new McqType({ name, description, imageUrl });
+        const newMcqType = new McqType({
+            name,
+            description,
+            imageUrl,
+            entryFee: entryFee || 0,
+            startTimeBeforeStart: new Date(startTimeBeforeStart),
+            dueTimeBeforeStart: new Date(dueTimeBeforeStart)
+        });
+
         const savedMcqType = await newMcqType.save();
 
         res.status(201).json({ message: 'MCQ type created successfully!', mcqType: savedMcqType });
     } catch (error) {
+        console.error('Error creating MCQ type:', error);
         res.status(500).json({ message: 'Server error creating MCQ type.' });
     }
 };
-
 exports.updateMcqType = async (req, res) => {
     const { id } = req.params;
-    const { name, description, imageUrl } = req.body;
+    const { name, description, imageUrl, entryFee, startTimeBeforeStart, dueTimeBeforeStart } = req.body;
 
     try {
         const updatedMcqType = await McqType.findByIdAndUpdate(
             id,
-            { name, description, imageUrl },
+            { 
+                name, 
+                description, 
+                imageUrl, 
+                entryFee, 
+                startTimeBeforeStart: new Date(startTimeBeforeStart),
+                dueTimeBeforeStart: new Date(dueTimeBeforeStart)
+            },
             { new: true, runValidators: true }
         );
 
@@ -64,6 +79,7 @@ exports.updateMcqType = async (req, res) => {
 
         res.status(200).json({ message: 'MCQ type updated successfully!', mcqType: updatedMcqType });
     } catch (error) {
+        console.error('Error updating MCQ type:', error);
         res.status(500).json({ message: 'Server error updating MCQ type.' });
     }
 };
