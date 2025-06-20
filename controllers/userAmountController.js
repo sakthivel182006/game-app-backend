@@ -417,3 +417,57 @@ exports.compileUserEarnings = async (req, res) => {
     });
   }
 };
+
+exports.getAllUserAmounts = async (req, res) => {
+  try {
+    const allRecords = await UserAmount.find().populate('userId', 'email').lean();
+
+    // Group by mcqTypeId
+    const groupedByMcq = {};
+
+    allRecords.forEach(item => {
+      const key = item.mcqTypeId.toString();
+      if (!groupedByMcq[key]) groupedByMcq[key] = [];
+      groupedByMcq[key].push(item);
+    });
+
+    const finalResults = [];
+
+    for (const mcqId in groupedByMcq) {
+      const group = groupedByMcq[mcqId];
+
+      // Sort descending by userAmount
+      group.sort((a, b) => b.userAmount - a.userAmount);
+
+      // Assign ranks
+      let rank = 1;
+      let lastAmount = null;
+      let sameRankCount = 0;
+
+      for (let i = 0; i < group.length; i++) {
+        const current = group[i];
+
+        if (lastAmount === current.userAmount) {
+          current.rank = rank;
+          sameRankCount++;
+        } else {
+          rank = rank + sameRankCount;
+          current.rank = rank;
+          sameRankCount = 1;
+          lastAmount = current.userAmount;
+        }
+
+        finalResults.push(current);
+      }
+    }
+
+    res.json({
+      success: true,
+      message: "Ranked user amounts fetched successfully",
+      data: finalResults,
+    });
+  } catch (error) {
+    console.error('Error fetching user amounts:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};

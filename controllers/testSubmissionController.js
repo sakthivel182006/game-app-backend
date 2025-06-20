@@ -102,22 +102,20 @@ exports.getSubmissionByIdadminside = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-
 exports.getSubmissionBymcqtypeid = async (req, res) => {
   try {
     const mcqTypeId = req.params.mcqTypeId;
 
     let query = {};
 
-    // Safely check if it is a valid ObjectId
     if (mongoose.Types.ObjectId.isValid(mcqTypeId)) {
       query.mcqTypeId = new mongoose.Types.ObjectId(mcqTypeId);
     } else {
-      // If not valid ObjectId, just use it as-is (assuming it's stored as a string)
       query.mcqTypeId = mcqTypeId;
     }
 
-    const submissions = await TestSubmission.find(query);
+    const submissions = await TestSubmission.find(query)
+      .populate('userId', 'username email');
 
     if (!submissions || submissions.length === 0) {
       return res.status(404).json({ error: 'No submissions found for this mcqTypeId' });
@@ -129,7 +127,6 @@ exports.getSubmissionBymcqtypeid = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-
 exports.getSubmissiondetailsbothuseridandmcqtypeid = async (req, res) => {
   try {
     const { userId, mcqTypeId } = req.params;
@@ -142,7 +139,7 @@ exports.getSubmissiondetailsbothuseridandmcqtypeid = async (req, res) => {
     const submissions = await TestSubmission.find({
       userId: objectUserId,
       mcqTypeId: objectMcqTypeId
-    });
+    }).populate('userId', 'username', 'email');
 
     if (!submissions || submissions.length === 0) {
       return res.status(404).json({ error: 'No submissions found for this user and mcqTypeId combination' });
@@ -178,13 +175,11 @@ exports.deleteSubmission = async (req, res) => {
   }
 };
 
-
 exports.calculateEarningsDistribution = async (req, res) => {
   try {
-    // 1. Fetch completed submissions with necessary data
     const submissions = await TestSubmission.find({ 
       status: 'completed',
-      activityStatus: 'normal' // Exclude illegal attempts
+      activityStatus: 'normal'
     })
     .populate('userId', 'username email')
     .populate('mcqTypeId', 'name entryFee negativeMarkPercentage')
@@ -197,7 +192,6 @@ exports.calculateEarningsDistribution = async (req, res) => {
       });
     }
 
-    // 2. Check for existing UserAmount records to prevent duplicates
     const existingUserAmounts = await UserAmount.find({
       submissionId: { $in: submissions.map(s => s._id) }
     }).select('submissionId').lean();
@@ -206,24 +200,20 @@ exports.calculateEarningsDistribution = async (req, res) => {
       existingUserAmounts.map(ua => ua.submissionId.toString())
     );
 
-    // 3. Group submissions by mcqTypeId and calculate earnings
     const grouped = {};
     const newUserAmounts = [];
-    
+
     for (const sub of submissions) {
-      // Skip if earnings already calculated for this submission
       if (existingSubmissionIds.has(sub._id.toString())) continue;
 
       const mcqId = sub.mcqTypeId._id.toString();
       const entryFee = sub.mcqTypeId.entryFee;
       const negativeMarkPercent = sub.mcqTypeId.negativeMarkPercentage || 0;
 
-      // Calculate earnings with negative marking
       const negativeMarkDeduction = (entryFee * negativeMarkPercent * sub.noofwrongquestions) / 100;
       let userEarning = (entryFee * sub.percentage) / 100;
       userEarning = Math.max(0, userEarning - negativeMarkDeduction);
 
-      // Initialize group if not exists
       if (!grouped[mcqId]) {
         grouped[mcqId] = [];
       }
@@ -236,22 +226,19 @@ exports.calculateEarningsDistribution = async (req, res) => {
       });
     }
 
-    // 4. Process each MCQ type group to determine ranks
     const distribution = [];
-    
+
     for (const mcqTypeId in grouped) {
       const group = grouped[mcqTypeId];
-      
-      // Sort by earnings descending
+
       group.sort((a, b) => b.userEarning - a.userEarning);
 
-      // Assign ranks and prepare records
       for (let i = 0; i < group.length; i++) {
         const item = group[i];
         const sub = item.submission;
-        const rank = i + 1; // 1-based ranking
-        
-        // Prepare UserAmount document
+        const rank = i + 1;
+        const negativeMarkPercent = sub.mcqTypeId.negativeMarkPercentage || 0;
+
         newUserAmounts.push({
           userId: sub.userId._id,
           mcqTypeId: sub.mcqTypeId._id,
@@ -268,7 +255,6 @@ exports.calculateEarningsDistribution = async (req, res) => {
           calculatedAt: new Date()
         });
 
-        // Prepare response data
         distribution.push({
           userId: sub.userId._id,
           username: sub.userId.username,
@@ -279,7 +265,7 @@ exports.calculateEarningsDistribution = async (req, res) => {
           percentage: sub.percentage,
           correctAnswers: sub.noofcorrecctquestions,
           wrongAnswers: sub.noofwrongquestions,
-          negativeMarkPercent,
+          negativeMarkPercent, // fixed: correctly scoped variable
           negativeMarkDeduction: item.negativeMarkDeduction.toFixed(2),
           userEarning: item.userEarning.toFixed(2),
           adminEarning: item.adminEarning.toFixed(2),
@@ -290,12 +276,10 @@ exports.calculateEarningsDistribution = async (req, res) => {
       }
     }
 
-    // 5. Bulk insert new UserAmount records for better performance
     if (newUserAmounts.length > 0) {
       await UserAmount.insertMany(newUserAmounts);
     }
 
-    // 6. Return comprehensive response
     res.status(200).json({
       success: true,
       message: 'Earnings distribution calculated successfully',
@@ -317,6 +301,5 @@ exports.calculateEarningsDistribution = async (req, res) => {
     });
   }
 };
-
 
 

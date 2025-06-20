@@ -8,4 +8,10 @@ router.post('/:userId/summaries/calculate', summaryController.calculateSummary);
 // Get all summaries for a user
 router.get('/:userId/summaries', summaryController.getUserSummaries);
 
+
+
+router.get('/summaries', summaryController.getAllEarnings);
+
+
 module.exports = router;
+

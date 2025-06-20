@@ -12,6 +12,8 @@ const mcqquestionRoutes = require('./routes/mcqQuestionRoutes');
 const testRoutes = require('./routes/testRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
 const useramountdistributionroutes = require('./routes/userAmountRoutes');
+const summaryroutes = require('./routes/summaryRoutes');
+const purchaseRoutes = require('./routes/purchaseRoutes');
 
 
 dotenv.config();
@@ -48,6 +50,9 @@ app.use('/api', useramountdistributionroutes);
 app.use('/api', paymentRoutes);
 app.use('/api', authRoutes);
 app.use('/api', mcqRoutes);
+app.use('/api', summaryroutes);
+app.use('/api/purchases', purchaseRoutes);
+
 app.use('/api/testsubmissions', testRoutes);
 app.use('/api/mcqquestion', mcqquestionRoutes);
 

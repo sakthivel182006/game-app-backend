@@ -15,6 +15,7 @@ const {
 
 // ✅ POST: Submit a test
 // URL: /api/testsubmissions/api/submit/test
+
 router.post('/api/testsubmissions/api/submit/test', submitTest);
 
 // ✅ GET: Fetch all submissions
@@ -22,13 +23,11 @@ router.post('/api/testsubmissions/api/submit/test', submitTest);
 router.get('/', getAllSubmissions);
 
 
-router.get('/getall', getAllSubmissionsbyadminside);
 
+router.get('/getall', getAllSubmissionsbyadminside);
 
 router.get('/calculate-earnings', calculateEarningsDistribution);
 
-// ✅ GET: Fetch submission by ID
-// URL: /api/testsubmissions/:id
 
 router.get('/loginbyuserid/:userId', getSubmissionById);
 

@@ -10,6 +10,11 @@ router.put('/deduct-earnings/:userId/:amount', userAmountController.deductUserAm
 
 
 
+
+
+// Calculate amounts for a specific user
+router.get('/getAllUserAmounts', userAmountController.getAllUserAmounts);
+
 // Calculate amounts for a specific user
 router.get('/calculate-amounts/:userId', userAmountController.compileUserEarnings);
 

@@ -1,6 +1,6 @@
-const UserAmount = require('../models/userAmount');
+const UserAmount = require('../models/userAmountModel');
 const SummaryRecord = require('../models/summaryRecord');
-
+const User =require('../models/User');
 exports.calculateSummary = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -100,6 +100,36 @@ exports.getUserSummaries = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to fetch summaries',
+      error: error.message
+    });
+  }
+};
+
+exports.getAllEarnings = async (req, res) => {
+  try {
+    const records = await SummaryRecord.find()
+      .populate('userId', 'username email')  // Populate user details
+      .populate('mcqTypeId', 'name')         // Populate MCQ type name
+      .lean();
+
+    if (!records || records.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'No earnings summary records found'
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      count: records.length,
+      data: records
+    });
+
+  } catch (error) {
+    console.error('Error fetching earnings summary:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Server error while fetching earnings summary',
       error: error.message
     });
   }
