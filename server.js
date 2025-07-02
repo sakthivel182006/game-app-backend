@@ -8,12 +8,15 @@ const fs = require('fs');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/userRoutes');
 const mcqRoutes = require('./routes/mcqRoutes');
+const chesstournamentroutes = require('./routes/chesstournamentroutes');
 const mcqquestionRoutes = require('./routes/mcqQuestionRoutes');
 const testRoutes = require('./routes/testRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
 const useramountdistributionroutes = require('./routes/userAmountRoutes');
+
 const summaryroutes = require('./routes/summaryRoutes');
 const purchaseRoutes = require('./routes/purchaseRoutes');
+const chesstournament = require('./models/chesstournament');
 
 
 dotenv.config();
@@ -50,6 +53,8 @@ app.use('/api', useramountdistributionroutes);
 app.use('/api', paymentRoutes);
 app.use('/api', authRoutes);
 app.use('/api', mcqRoutes);
+app.use('/api/chess', chesstournamentroutes);
+
 app.use('/api', summaryroutes);
 app.use('/api/purchases', purchaseRoutes);
 
