@@ -10,10 +10,18 @@ const {
   uploadProfileImage,
   getAllUsers,
   updateUser,
-  deleteUser
+  deleteUser,
+  sendVerificationLink,
+  verifyEmailAddress
+  
+
 } = require('../controllers/userController');
 const { protect } = require('../middleware/auth');
 const upload = require('../config/multer');
+
+// Email Verification Routes
+router.post('/auth/send-verification-link', sendVerificationLink);
+router.get('/auth/verify-email-address', verifyEmailAddress);
 
 router.post('/auth/register', registerUser);
 router.post('/auth/verify-otp', verifyOTP);

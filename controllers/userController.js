@@ -1,5 +1,6 @@
 const User = require('../models/User.js');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const transporter = require('../config/mail.js');
 const generateOTP = require('../utils/generateOTP.js');
@@ -126,9 +127,6 @@ exports.registerUser = async (req, res) => {
   }
 };
 
-// @desc    Verify OTP
-// @route   POST /api/auth/verify-otp
-// @access  Public
  exports.verifyOTP = async (req, res) => {
   const { userId, otp } = req.body;
 
@@ -504,5 +502,338 @@ exports.deleteUser = async (req, res) => {
   } catch (error) {
     console.error('Error deleting user:', error);
     res.status(500).json({ message: 'Server error while deleting user' });
+  }
+};
+
+
+// controllers/authController.js (or your controller file)
+
+exports.verifyEmailAddress = async (req, res) => {
+  const { userId, otp } = req.query;
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+
+    if (user.isVerified) {
+      return res.status(400).send('Email already verified.');
+    }
+
+    if (user.otp !== otp) {
+      return res.status(400).send('Invalid OTP');
+    }
+
+    if (user.otpExpires < new Date()) {
+      return res.status(400).send('OTP expired');
+    }
+
+    // Update user verification
+    user.isVerified = true;
+    user.otp = undefined;
+    user.otpExpires = undefined;
+    await user.save();
+
+    // Redirect or confirm success
+    return res.send(`
+      <html>
+        <head>
+          <title>Email Verified</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              background: #f4f4f4;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              height: 100vh;
+            }
+            .card {
+              background: white;
+              padding: 40px;
+              border-radius: 10px;
+              box-shadow: 0 0 15px rgba(0,0,0,0.1);
+              text-align: center;
+            }
+            .btn {
+              margin-top: 20px;
+              padding: 10px 25px;
+              background: #6e48aa;
+              color: white;
+              border: none;
+              border-radius: 5px;
+              text-decoration: none;
+              font-weight: bold;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="card">
+            <h2>🎉 Your email has been verified!</h2>
+            <p>You can now log in and start your learning journey.</p>
+            <a href="https://crackquizwithsakthi.vercel.app/login" class="btn">Go to Login</a>
+          </div>
+        </body>
+      </html>
+    `);
+
+  } catch (error) {
+    console.error('Error verifying email via link:', error);
+    res.status(500).send('Server error while verifying email');
+  }
+};
+
+
+exports.sendVerificationLink = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    // Check if user exists
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "Email not registered." });
+    }
+
+    // Check if already verified
+    if (user.isVerified) {
+      return res.status(400).json({ message: "Email is already verified. Please login." });
+    }
+
+    // Generate unique code
+    const uniqueCode = crypto.randomBytes(16).toString("hex");
+    user.verificationCode = uniqueCode;
+    await user.save();
+
+    // Create verification link
+    const link = `https://gameappbackend-i8zv.onrender.com/api/auth/verify-email-address?code=${uniqueCode}&email=${email}`;
+
+    // Mail options
+    const mailOptions = {
+  from: `"Crack Quiz With Sakthi" <${process.env.EMAIL_USER}>`,
+  to: email,
+  subject: "🔐 Verify Your Email Address",
+  html: `
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+      body { font-family: 'Inter', sans-serif; background-color: #f8fafc; margin: 0; padding: 0; }
+      .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+      .card { background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); }
+      .header { background: linear-gradient(135deg, #6b46c1 0%, #805ad5 100%); padding: 24px; border-radius: 12px 12px 0 0; }
+      .content { padding: 24px; }
+      .button { background: linear-gradient(135deg, #6b46c1 0%, #805ad5 100%); color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block; }
+      .footer { padding: 16px; text-align: center; font-size: 12px; color: #64748b; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="card">
+        <div class="header">
+          <h1 style="color: white; font-size: 24px; font-weight: 700; text-align: center; margin: 0;">Verify Your Email</h1>
+        </div>
+        <div class="content">
+          <p style="font-size: 16px; color: #334155; margin-bottom: 24px;">Hi there,</p>
+          <p style="font-size: 16px; color: #334155; margin-bottom: 24px;">Thank you for registering with Crack Quiz With Sakthi! Please click the button below to verify your email address:</p>
+          
+          <div style="text-align: center; margin: 32px 0;">
+            <a href="${link}" class="button">Verify Email Address</a>
+          </div>
+          
+          <p style="font-size: 14px; color: #64748b; margin-bottom: 24px;">If you didn't create an account with us, please ignore this email.</p>
+          
+          <div style="border-top: 1px solid #e2e8f0; padding-top: 16px;">
+            <p style="font-size: 14px; color: #64748b; margin-bottom: 8px;">Didn't work? Copy and paste this link in your browser:</p>
+            <p style="font-size: 13px; color: #475569; word-break: break-all;">${link}</p>
+          </div>
+        </div>
+        <div class="footer">
+          <p>© ${new Date().getFullYear()} Crack Quiz With Sakthi. All rights reserved.</p>
+        </div>
+      </div>
+    </div>
+  </body>
+  </html>
+  `
+};
+
+    // Send email
+    await transporter.sendMail(mailOptions);
+    res.json({ message: "Verification email sent successfully." });
+
+  } catch (err) {
+    console.error("Error in sending verification email:", err);
+    res.status(500).json({ message: "Server error. Please try again later." });
+  }
+};
+exports.verifyEmailAddress = async (req, res) => {
+  const { code, email } = req.query;
+
+  try {
+    const user = await User.findOne({ email, verificationCode: code });
+
+    if (!user) {
+      return res.send(`
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Verification Failed | Crack Quiz With Sakthi</title>
+          <script src="https://cdn.tailwindcss.com"></script>
+          <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+          <style>
+            body { font-family: 'Inter', sans-serif; }
+            .gradient-bg { background: linear-gradient(135deg, #6b46c1 0%, #805ad5 100%); }
+          </style>
+        </head>
+        <body class="min-h-screen flex items-center justify-center p-4 bg-gray-50">
+          <div class="w-full max-w-md">
+            <div class="gradient-bg text-white rounded-t-xl p-6 text-center">
+              <h1 class="text-2xl font-bold">Verification Failed</h1>
+            </div>
+            
+            <div class="bg-white rounded-b-xl shadow-lg p-6 text-center">
+              <div class="flex justify-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h2 class="text-xl font-semibold text-gray-800 mb-2">Invalid or Expired Link</h2>
+              <p class="text-gray-600 mb-6">The verification link you used is invalid or has expired. Please request a new verification email.</p>
+              
+              <a href="https://crackquizwithsakthi.vercel.app" class="inline-block gradient-bg text-white py-2 px-6 rounded-lg font-medium hover:opacity-90 transition">
+                Return to Home
+              </a>
+            </div>
+          </div>
+        </body>
+        </html>
+      `);
+    }
+
+    user.isVerified = true;
+    user.verificationCode = null;
+    await user.save();
+
+    res.send(`
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Email Verified | Crack Quiz With Sakthi</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <style>
+          body { font-family: 'Inter', sans-serif; }
+          .gradient-bg { background: linear-gradient(135deg, #6b46c1 0%, #805ad5 100%); }
+          .checkmark-circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 2;
+            stroke-miterlimit: 10;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+          }
+          .checkmark {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: block;
+            stroke-width: 2;
+            stroke: #fff;
+            stroke-miterlimit: 10;
+            margin: 10% auto;
+            box-shadow: inset 0px 0px 0px #6b46c1;
+            animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+          }
+          .checkmark-check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+          }
+          @keyframes stroke {
+            100% { stroke-dashoffset: 0; }
+          }
+          @keyframes scale {
+            0%, 100% { transform: none; }
+            50% { transform: scale3d(1.1, 1.1, 1); }
+          }
+          @keyframes fill {
+            100% { box-shadow: inset 0px 0px 0px 30px #6b46c1; }
+          }
+        </style>
+      </head>
+      <body class="min-h-screen flex items-center justify-center p-4 bg-gray-50">
+        <div class="w-full max-w-md">
+          <div class="gradient-bg text-white rounded-t-xl p-6 text-center">
+            <h1 class="text-2xl font-bold">Email Verified</h1>
+          </div>
+          
+          <div class="bg-white rounded-b-xl shadow-lg p-6 text-center">
+            <div class="mb-4">
+              <svg class="checkmark mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                <circle class="checkmark-circle" fill="none" cx="26" cy="26" r="25"/>
+                <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+              </svg>
+            </div>
+            <h2 class="text-xl font-semibold text-gray-800 mb-2">Successfully Verified!</h2>
+            <p class="text-gray-600 mb-6">Your email address has been successfully verified. You can now login to your account.</p>
+            
+            <a href="https://crackquizwithsakthi.vercel.app" class="inline-block gradient-bg text-white py-2 px-6 rounded-lg font-medium hover:opacity-90 transition">
+              Continue to Login
+            </a>
+          </div>
+        </div>
+      </body>
+      </html>
+    `);
+  } catch (err) {
+    console.error(err);
+    res.send(`
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Error | Crack Quiz With Sakthi</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <style>
+          body { font-family: 'Inter', sans-serif; }
+          .gradient-bg { background: linear-gradient(135deg, #6b46c1 0%, #805ad5 100%); }
+        </style>
+      </head>
+      <body class="min-h-screen flex items-center justify-center p-4 bg-gray-50">
+        <div class="w-full max-w-md">
+          <div class="gradient-bg text-white rounded-t-xl p-6 text-center">
+            <h1 class="text-2xl font-bold">Verification Error</h1>
+          </div>
+          
+          <div class="bg-white rounded-b-xl shadow-lg p-6 text-center">
+            <div class="flex justify-center mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <h2 class="text-xl font-semibold text-gray-800 mb-2">Server Error</h2>
+            <p class="text-gray-600 mb-6">We encountered an error while verifying your email. Please try again later.</p>
+            
+            <a href="https://crackquizwithsakthi.vercel.app" class="inline-block gradient-bg text-white py-2 px-6 rounded-lg font-medium hover:opacity-90 transition">
+              Return to Home
+            </a>
+          </div>
+        </div>
+      </body>
+      </html>
+    `);
   }
 };
