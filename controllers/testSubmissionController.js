@@ -294,7 +294,7 @@ exports.calculateEarningsDistribution = async (req, res) => {
 
   } catch (err) {
     console.error('Distribution calculation error:', err);
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
       error: 'Failed to calculate earnings distribution',
       message: err.message 

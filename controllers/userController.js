@@ -116,7 +116,7 @@ exports.registerUser = async (req, res) => {
     await transporter.sendMail(mailOptions);
 
     res.status(201).json({
-      message: 'Registration successful! OTP sent to your email. Please verify.',
+      message: 'Registration successful! Please Go To Verify Your Email Address.',
       userId: user._id,
       email: user.email
     });
