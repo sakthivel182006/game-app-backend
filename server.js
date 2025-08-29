@@ -20,7 +20,7 @@ const chesstournament = require('./models/chesstournament');
 
 const courseRoutes = require('./routes/courseRoutes');
 const courseTopicRoutes = require('./routes/courseTopicRoutes');
-
+const sourceCodeRoutes = require('./routes/sourceCodeRoutes');
 dotenv.config();
 connectDB();
 
@@ -53,6 +53,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/courses', courseRoutes);
 app.use('/api/coursestopics', courseTopicRoutes);
+app.use('/api/sourcecodes', sourceCodeRoutes);
 
 app.use('/api', useramountdistributionroutes);
 app.use('/api', paymentRoutes);

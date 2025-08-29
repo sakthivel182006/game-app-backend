@@ -48,7 +48,6 @@ exports.updatePurchase = async (req, res) => {
   }
 };
 
-// 5. Delete a purchase by ID (DELETE)
 exports.deletePurchase = async (req, res) => {
   try {
     const deleted = await Purchase.findByIdAndDelete(req.params.id);

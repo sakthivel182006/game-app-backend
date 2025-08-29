@@ -19,7 +19,7 @@ const CourseSchema = new mongoose.Schema({
     },
     category: {
         type: String,
-        required: true, // Example: "Programming", "Mathematics", "AI"
+        required: true, 
         trim: true
     },
     level: {
