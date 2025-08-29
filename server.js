@@ -18,6 +18,8 @@ const summaryroutes = require('./routes/summaryRoutes');
 const purchaseRoutes = require('./routes/purchaseRoutes');
 const chesstournament = require('./models/chesstournament');
 
+const courseRoutes = require('./routes/courseRoutes');
+const courseTopicRoutes = require('./routes/courseTopicRoutes');
 
 dotenv.config();
 connectDB();
@@ -48,6 +50,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
+
+app.use('/api/courses', courseRoutes);
+app.use('/api/coursestopics', courseTopicRoutes);
 
 app.use('/api', useramountdistributionroutes);
 app.use('/api', paymentRoutes);
