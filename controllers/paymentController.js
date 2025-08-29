@@ -6,8 +6,8 @@ const Purchase = require('../models/Purchase');
 
 
 const razorpay = new Razorpay({
-  key_id: 'rzp_test_4LPGV7rP4wBreT',
-  key_secret: '14VPwmYvO6LmoLAyqRKYgE3G'
+  key_id: 'rzp_live_RB344vHWCMRmVu',
+  key_secret: 'By9CZOOnxTQxIi2tDPgTPoc2'
 });
 
 exports.createOrder = async (req, res) => {
