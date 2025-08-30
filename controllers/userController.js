@@ -827,7 +827,7 @@ exports.verifyEmailAddress = async (req, res) => {
             <h2 class="text-xl font-semibold text-gray-800 mb-2">Server Error</h2>
             <p class="text-gray-600 mb-6">We encountered an error while verifying your email. Please try again later.</p>
             
-            <a href="https://crackquizwithsakthi.vercel.app" class="inline-block gradient-bg text-white py-2 px-6 rounded-lg font-medium hover:opacity-90 transition">
+            <a href="https://learnfromsakthi.vercel.app" class="inline-block gradient-bg text-white py-2 px-6 rounded-lg font-medium hover:opacity-90 transition">
               Return to Home
             </a>
           </div>
