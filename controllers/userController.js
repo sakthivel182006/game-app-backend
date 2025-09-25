@@ -283,10 +283,7 @@ exports.registerUser = async (req, res) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    if (!user.isVerified) {
-      return res.status(403).json({ message: 'Account not verified. Please check your email for OTP.' });
-    }
-
+   
     const isMatch = await user.matchPassword(password);
     if (!isMatch) {
       return res.status(400).json({ message: 'Invalid credentials' });
