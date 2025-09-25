@@ -7,9 +7,6 @@ const generateOTP = require('../utils/generateOTP.js');
 const path = require('path');
 const fs = require('fs');
 
-// @desc    Register a new user
-// @route   POST /api/auth/register
-// @access  Public
 exports.registerUser = async (req, res) => {
   const { username, email, password } = req.body;
 
