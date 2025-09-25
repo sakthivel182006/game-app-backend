@@ -2,10 +2,13 @@ const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const transporter = nodemailer.createTransport({
-  service: 'Gmail', // or your SMTP service
+  service: 'Gmail',
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: process.env.EMAIL_USER, // your Gmail address
+    pass: process.env.EMAIL_PASS, // Gmail App Password (not normal password)
+  },
+  tls: {
+    rejectUnauthorized: false, // allows self-signed certs (for dev)
   },
 });
 
