@@ -29,7 +29,7 @@ const UserSchema = new mongoose.Schema({
   },
   isVerified: {
     type: Boolean,
-    default: false,
+    default: true,
   },
   image: { // Added image field
     type: String, // Store the URL or path to the image

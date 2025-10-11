@@ -34,89 +34,89 @@ exports.registerUser = async (req, res) => {
 
     await user.save();
 
-   // Prepare email content
-    const mailOptions = {
-      from: `"Crack Quiz With Sakthi" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: 'Welcome to Crack Quiz With Sakthi - Verify Your Account',
-      html: `
-        <div style="max-width: 600px; margin: 0 auto; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-          <!-- Header with Branding -->
-          <div style="background: linear-gradient(135deg, #6e48aa 0%, #9d50bb 100%); padding: 30px 20px; text-align: center;">
-            <h1 style="color: white; margin: 0; font-size: 28px;">Crack Quiz With Sakthi</h1>
-            <p style="color: rgba(255,255,255,0.8); margin: 5px 0 0; font-size: 16px;">Expand Your Knowledge Horizons</p>
-          </div>
+  //  // Prepare email content
+  //   const mailOptions = {
+  //     from: `"Crack Quiz With Sakthi" <${process.env.EMAIL_USER}>`,
+  //     to: email,
+  //     subject: 'Welcome to Crack Quiz With Sakthi - Verify Your Account',
+  //     html: `
+  //       <div style="max-width: 600px; margin: 0 auto; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+  //         <!-- Header with Branding -->
+  //         <div style="background: linear-gradient(135deg, #6e48aa 0%, #9d50bb 100%); padding: 30px 20px; text-align: center;">
+  //           <h1 style="color: white; margin: 0; font-size: 28px;">Crack Quiz With Sakthi</h1>
+  //           <p style="color: rgba(255,255,255,0.8); margin: 5px 0 0; font-size: 16px;">Expand Your Knowledge Horizons</p>
+  //         </div>
           
-          <!-- Email Content -->
-          <div style="padding: 30px 25px;">
-            <h2 style="color: #333; margin-top: 0;">Welcome ${username}!</h2>
-            <p style="color: #555; font-size: 16px; line-height: 1.6;">Thank you for joining our community of knowledge seekers! We're excited to have you on board.</p>
+  //         <!-- Email Content -->
+  //         <div style="padding: 30px 25px;">
+  //           <h2 style="color: #333; margin-top: 0;">Welcome ${username}!</h2>
+  //           <p style="color: #555; font-size: 16px; line-height: 1.6;">Thank you for joining our community of knowledge seekers! We're excited to have you on board.</p>
             
-            <!-- OTP Section -->
-            <div style="background: #f8f9fa; border-radius: 8px; padding: 15px; text-align: center; margin: 25px 0; border: 1px dashed #6e48aa;">
-              <p style="margin: 0; font-size: 14px; color: #666;">Your verification code:</p>
-              <div style="font-size: 32px; font-weight: bold; letter-spacing: 3px; color: #6e48aa; margin: 10px 0;">${otp}</div>
-              <p style="margin: 0; font-size: 12px; color: #ff6b6b;">Valid for 10 minutes only</p>
-            </div>
+  //           <!-- OTP Section -->
+  //           <div style="background: #f8f9fa; border-radius: 8px; padding: 15px; text-align: center; margin: 25px 0; border: 1px dashed #6e48aa;">
+  //             <p style="margin: 0; font-size: 14px; color: #666;">Your verification code:</p>
+  //             <div style="font-size: 32px; font-weight: bold; letter-spacing: 3px; color: #6e48aa; margin: 10px 0;">${otp}</div>
+  //             <p style="margin: 0; font-size: 12px; color: #ff6b6b;">Valid for 10 minutes only</p>
+  //           </div>
             
-            <!-- Website Features -->
-            <div style="margin: 25px 0;">
-              <h3 style="color: #6e48aa; margin-bottom: 15px;">Start Your Knowledge Journey:</h3>
-              <div style="display: flex; margin-bottom: 15px;">
-                <div style="flex: 1; padding: 10px; background: #f9f5ff; border-radius: 5px; margin-right: 10px;">
-                  <p style="font-weight: bold; color: #6e48aa; margin: 0 0 5px 0;">📚 Diverse Quizzes</p>
-                  <p style="margin: 0; font-size: 14px; color: #555;">Test your knowledge across various subjects</p>
-                </div>
-                <div style="flex: 1; padding: 10px; background: #f9f5ff; border-radius: 5px;">
-                  <p style="font-weight: bold; color: #6e48aa; margin: 0 0 5px 0;">🏆 Earn Badges</p>
-                  <p style="margin: 0; font-size: 14px; color: #555;">Get recognized for your achievements</p>
-                </div>
-              </div>
-              <div style="display: flex;">
-                <div style="flex: 1; padding: 10px; background: #f9f5ff; border-radius: 5px; margin-right: 10px;">
-                  <p style="font-weight: bold; color: #6e48aa; margin: 0 0 5px 0;">📊 Track Progress</p>
-                  <p style="margin: 0; font-size: 14px; color: #555;">Monitor your learning journey</p>
-                </div>
-                <div style="flex: 1; padding: 10px; background: #f9f5ff; border-radius: 5px;">
-                  <p style="font-weight: bold; color: #6e48aa; margin: 0 0 5px 0;">👥 Community</p>
-                  <p style="margin: 0; font-size: 14px; color: #555;">Compete with fellow learners</p>
-                </div>
-              </div>
-            </div>
+  //           <!-- Website Features -->
+  //           <div style="margin: 25px 0;">
+  //             <h3 style="color: #6e48aa; margin-bottom: 15px;">Start Your Knowledge Journey:</h3>
+  //             <div style="display: flex; margin-bottom: 15px;">
+  //               <div style="flex: 1; padding: 10px; background: #f9f5ff; border-radius: 5px; margin-right: 10px;">
+  //                 <p style="font-weight: bold; color: #6e48aa; margin: 0 0 5px 0;">📚 Diverse Quizzes</p>
+  //                 <p style="margin: 0; font-size: 14px; color: #555;">Test your knowledge across various subjects</p>
+  //               </div>
+  //               <div style="flex: 1; padding: 10px; background: #f9f5ff; border-radius: 5px;">
+  //                 <p style="font-weight: bold; color: #6e48aa; margin: 0 0 5px 0;">🏆 Earn Badges</p>
+  //                 <p style="margin: 0; font-size: 14px; color: #555;">Get recognized for your achievements</p>
+  //               </div>
+  //             </div>
+  //             <div style="display: flex;">
+  //               <div style="flex: 1; padding: 10px; background: #f9f5ff; border-radius: 5px; margin-right: 10px;">
+  //                 <p style="font-weight: bold; color: #6e48aa; margin: 0 0 5px 0;">📊 Track Progress</p>
+  //                 <p style="margin: 0; font-size: 14px; color: #555;">Monitor your learning journey</p>
+  //               </div>
+  //               <div style="flex: 1; padding: 10px; background: #f9f5ff; border-radius: 5px;">
+  //                 <p style="font-weight: bold; color: #6e48aa; margin: 0 0 5px 0;">👥 Community</p>
+  //                 <p style="margin: 0; font-size: 14px; color: #555;">Compete with fellow learners</p>
+  //               </div>
+  //             </div>
+  //           </div>
             
-            <!-- Call to Action -->
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="https://crackquizwithsakthi.vercel.app" style="display: inline-block; background: #6e48aa; color: white; padding: 12px 25px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 16px; margin-bottom: 15px;">Start Quizzing Now</a>
-              <p style="color: #888; font-size: 14px;">Verify your account and dive into our quiz collection!</p>
-            </div>
+  //           <!-- Call to Action -->
+  //           <div style="text-align: center; margin: 30px 0;">
+  //             <a href="https://crackquizwithsakthi.vercel.app" style="display: inline-block; background: #6e48aa; color: white; padding: 12px 25px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 16px; margin-bottom: 15px;">Start Quizzing Now</a>
+  //             <p style="color: #888; font-size: 14px;">Verify your account and dive into our quiz collection!</p>
+  //           </div>
             
-            <!-- Footer -->
-            <div style="border-top: 1px solid #eee; padding-top: 20px; margin-top: 20px;">
-              <p style="color: #888; font-size: 14px; line-height: 1.5;">If you didn't request this code, please ignore this email or contact support if you have concerns.</p>
-              <p style="color: #888; font-size: 14px; margin-bottom: 0;">Happy Learning!<br><strong>The Crack Quiz With Sakthi Team</strong></p>
-            </div>
-          </div>
+  //           <!-- Footer -->
+  //           <div style="border-top: 1px solid #eee; padding-top: 20px; margin-top: 20px;">
+  //             <p style="color: #888; font-size: 14px; line-height: 1.5;">If you didn't request this code, please ignore this email or contact support if you have concerns.</p>
+  //             <p style="color: #888; font-size: 14px; margin-bottom: 0;">Happy Learning!<br><strong>The Crack Quiz With Sakthi Team</strong></p>
+  //           </div>
+  //         </div>
           
-          <!-- Bottom Bar -->
-          <div style="background: #f5f5f5; padding: 15px; text-align: center; font-size: 12px; color: #888;">
-            <p style="margin: 0;">© ${new Date().getFullYear()} Crack Quiz With Sakthi. All rights reserved.</p>
-            <p style="margin: 5px 0 0;">
-              <a href="https://crackquizwithsakthi.vercel.app" style="color: #6e48aa; text-decoration: none;">Home</a> | 
-              <a href="https://crackquizwithsakthi.vercel.app/privacy" style="color: #6e48aa; text-decoration: none;">Privacy Policy</a> | 
-              <a href="https://crackquizwithsakthi.vercel.app/contact" style="color: #6e48aa; text-decoration: none;">Contact Us</a>
-            </p>
-          </div>
-        </div>
-      `
-    };
+  //         <!-- Bottom Bar -->
+  //         <div style="background: #f5f5f5; padding: 15px; text-align: center; font-size: 12px; color: #888;">
+  //           <p style="margin: 0;">© ${new Date().getFullYear()} Crack Quiz With Sakthi. All rights reserved.</p>
+  //           <p style="margin: 5px 0 0;">
+  //             <a href="https://crackquizwithsakthi.vercel.app" style="color: #6e48aa; text-decoration: none;">Home</a> | 
+  //             <a href="https://crackquizwithsakthi.vercel.app/privacy" style="color: #6e48aa; text-decoration: none;">Privacy Policy</a> | 
+  //             <a href="https://crackquizwithsakthi.vercel.app/contact" style="color: #6e48aa; text-decoration: none;">Contact Us</a>
+  //           </p>
+  //         </div>
+  //       </div>
+  //     `
+  //   };
 
-    await transporter.sendMail(mailOptions);
+  //   await transporter.sendMail(mailOptions);
 
-    res.status(201).json({
-      message: 'Registration successful! Please Go To Verify Your Email Address.',
-      userId: user._id,
-      email: user.email
-    });
+   res.status(201).json({
+     message: 'Registration successful! Please Go To login.',
+    userId: user._id,
+   email: user.email
+   });
 
   } catch (error) {
     console.error('Registration error:', error);
