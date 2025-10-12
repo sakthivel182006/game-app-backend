@@ -28,7 +28,6 @@ router.get('/getall', getAllSubmissionsbyadminside);
 
 router.get('/calculate-earnings', calculateEarningsDistribution);
 
-
 router.get('/loginbyuserid/:userId', getSubmissionById);
 
 router.get('/loginbyuseridbyadminside/:userId', getSubmissionByIdadminside);

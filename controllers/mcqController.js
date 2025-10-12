@@ -25,6 +25,8 @@ exports.getMcqTypeById = async (req, res) => {
         res.status(500).json({ message: 'Server error fetching MCQ type by ID.' });
     }
 };
+
+
 exports.createMcqType = async (req, res) => {
     const { name, description, imageUrl, entryFee, startTimeBeforeStart, dueTimeBeforeStart } = req.body;
 
@@ -55,6 +57,9 @@ exports.createMcqType = async (req, res) => {
         res.status(500).json({ message: 'Server error creating MCQ type.' });
     }
 };
+
+
+
 exports.updateMcqType = async (req, res) => {
     const { id } = req.params;
     const { name, description, imageUrl, entryFee, startTimeBeforeStart, dueTimeBeforeStart } = req.body;

@@ -14,6 +14,10 @@ const testRoutes = require('./routes/testRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
 const useramountdistributionroutes = require('./routes/userAmountRoutes');
 
+const collegeRoutes = require('./routes/collegeRoutes');
+const teacherRoutes = require('./routes/teacherRoutes');
+
+
 const summaryroutes = require('./routes/summaryRoutes');
 const purchaseRoutes = require('./routes/purchaseRoutes');
 const chesstournament = require('./models/chesstournament');
@@ -21,6 +25,20 @@ const chesstournament = require('./models/chesstournament');
 const courseRoutes = require('./routes/courseRoutes');
 const courseTopicRoutes = require('./routes/courseTopicRoutes');
 const sourceCodeRoutes = require('./routes/sourceCodeRoutes');
+
+const teacherMcqQuestionRoutes = require('./routes/teachermcqtypequestionaddcontrollerroutes');
+
+const teacherMcqTypeRoutes = require('./routes/teachermcqtypeaddcontrollerroutes');
+
+const teacherMcqQuestionsubmissionRoutes = require('./routes/teachermcqsubmissionreportroutes'); // <-- your routes file
+
+
+const paymentPlanRoutes = require('./routes/paymentPlanRoutes');
+
+const collegeOrderRoutes = require('./routes/collegeOrderRoutes');
+
+
+
 dotenv.config();
 connectDB();
 
@@ -50,6 +68,21 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
+
+
+app.use('/api/teachers', teacherMcqQuestionsubmissionRoutes);
+
+
+
+app.use('/api/paymentplans', paymentPlanRoutes);
+app.use('/api', collegeOrderRoutes);
+
+app.use('/api/teachers', teacherMcqQuestionRoutes);
+
+app.use('/api/colleges', collegeRoutes);
+app.use('/api/teachers', teacherRoutes);
+
+app.use('/api/teachers', teacherMcqTypeRoutes);
 
 app.use('/api/courses', courseRoutes);
 app.use('/api/coursestopics', courseTopicRoutes);

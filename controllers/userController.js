@@ -8,31 +8,45 @@ const path = require('path');
 const fs = require('fs');
 
 exports.registerUser = async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email, password, role } = req.body; // role added
+  let imagePath = 'default-avatar.png'; // default image
 
   try {
+    // If an image file is uploaded (optional)
+    if (req.file) {
+      imagePath = `/uploads/${req.file.filename}`;
+    }
+
+    // Check if email already exists
     let user = await User.findOne({ email });
     if (user) {
       return res.status(400).json({ message: 'User with this email already exists' });
     }
 
+    // Check if username already exists
     user = await User.findOne({ username });
     if (user) {
       return res.status(400).json({ message: 'User with this username already exists' });
     }
 
+    // Generate OTP (valid for 10 minutes)
     const otp = generateOTP();
     const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
 
+    // Create new user
     user = new User({
       username,
       email,
       password,
       otp,
       otpExpires,
+      role: role || 'user', // default to 'user' if not provided
+      image: imagePath,
     });
 
+    // Save user to database
     await user.save();
+
 
   //  // Prepare email content
   //   const mailOptions = {
@@ -112,15 +126,18 @@ exports.registerUser = async (req, res) => {
 
   //   await transporter.sendMail(mailOptions);
 
-   res.status(201).json({
-     message: 'Registration successful! Please Go To login.',
-    userId: user._id,
-   email: user.email
-   });
-
+  res.status(201).json({
+      message: 'Registration successful! Please go to login.',
+      userId: user._id,
+      email: user.email,
+      role: user.role,
+    });
   } catch (error) {
     console.error('Registration error:', error);
-    res.status(500).json({ message: 'Server error during registration', error: error.message });
+    res.status(500).json({
+      message: 'Server error during registration',
+      error: error.message,
+    });
   }
 };
 
@@ -274,25 +291,32 @@ exports.registerUser = async (req, res) => {
 // @desc    Login user
 // @route   POST /api/auth/login
 // @access  Public
+
+
   exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
+    // Find user by email
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-   
-    const isMatch = await user.matchPassword(password);
+    // Check password
+    const isMatch = await user.matchPassword(password); // make sure matchPassword is in your User model
     if (!isMatch) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: '1h',
-    });
+    // Generate JWT token (1h expiry)
+    const token = jwt.sign(
+      { id: user._id, role: user.role }, // include role in token payload
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
 
+    // Send user info with role
     res.status(200).json({
       message: 'Login successful',
       token,
@@ -300,7 +324,8 @@ exports.registerUser = async (req, res) => {
         id: user._id,
         username: user.username,
         email: user.email,
-        image: user.image
+        image: user.image || null,
+        role: user.role, // <--- include role here
       },
     });
 
@@ -309,7 +334,6 @@ exports.registerUser = async (req, res) => {
     res.status(500).json({ message: 'Server error during login', error: error.message });
   }
 };
-
 // @desc    Get user profile
 // @route   GET /api/user/profile
 // @access  Private

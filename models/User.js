@@ -31,12 +31,17 @@ const UserSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
-  image: { // Added image field
-    type: String, // Store the URL or path to the image
-    default: 'default-avatar.png', // You can set a default image
+  role: {
+    type: String,
+    enum: ['user', 'admin', 'teacher', 'collegemanagement'],
+    default: 'user',
+  },
+  image: { 
+    type: String,
+    default: 'default-avatar.png',
   }
 }, {
-  timestamps: true, // Adds createdAt and updatedAt timestamps
+  timestamps: true,
 });
 
 // Hash password before saving the user

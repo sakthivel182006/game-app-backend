@@ -38,6 +38,11 @@ const McqTypeSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now // Automatically records creation timestamp
+    },
+     teacherId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Teacher',
+        default: null // Can be null or filled in request
     }
 });
 
