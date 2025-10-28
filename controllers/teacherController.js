@@ -153,6 +153,8 @@ exports.getTeachersByCollege = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
+
 // Get remaining teachers that can be added for a college
 exports.getRemainingTeachers = async (req, res) => {
   try {
