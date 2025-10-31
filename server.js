@@ -9,14 +9,15 @@ const connectDB = require('./config/db');
 const authRoutes = require('./routes/userRoutes');
 const mcqRoutes = require('./routes/mcqRoutes');
 const chesstournamentroutes = require('./routes/chesstournamentroutes');
+
 const mcqquestionRoutes = require('./routes/mcqQuestionRoutes');
 const testRoutes = require('./routes/testRoutes');
+
 const paymentRoutes = require('./routes/paymentRoutes');
 const useramountdistributionroutes = require('./routes/userAmountRoutes');
 
 const collegeRoutes = require('./routes/collegeRoutes');
 const teacherRoutes = require('./routes/teacherRoutes');
-
 
 const summaryroutes = require('./routes/summaryRoutes');
 const purchaseRoutes = require('./routes/purchaseRoutes');
@@ -37,6 +38,9 @@ const paymentPlanRoutes = require('./routes/paymentPlanRoutes');
 
 const collegeOrderRoutes = require('./routes/collegeOrderRoutes');
 
+
+
+const compilerRoutes = require('./routes/compilerRoutes');
 
 
 dotenv.config();
@@ -73,6 +77,8 @@ app.use('/api/teachers', teacherMcqQuestionsubmissionRoutes);
 
 
 
+
+
 app.use('/api/paymentplans', paymentPlanRoutes);
 app.use('/api', collegeOrderRoutes);
 
@@ -98,6 +104,11 @@ app.use('/api/purchases', purchaseRoutes);
 
 app.use('/api/testsubmissions', testRoutes);
 app.use('/api/mcqquestion', mcqquestionRoutes);
+
+
+
+app.use('/api/compiler', compilerRoutes);
+
 
 const PORT = process.env.PORT || 5000;
 
