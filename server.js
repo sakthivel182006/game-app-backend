@@ -37,6 +37,7 @@ const teacherMcqQuestionsubmissionRoutes = require('./routes/teachermcqsubmissio
 const paymentPlanRoutes = require('./routes/paymentPlanRoutes');
 
 const collegeOrderRoutes = require('./routes/collegeOrderRoutes');
+const geminiRoutes = require('./routes/geminiRoutes.js');
 
 
 
@@ -109,6 +110,7 @@ app.use('/api/mcqquestion', mcqquestionRoutes);
 
 app.use('/api/compiler', compilerRoutes);
 
+app.use("/gemini", geminiRoutes);
 
 const PORT = process.env.PORT || 5000;
 
