@@ -5,6 +5,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const portfolioFeedback=require("./routes/portfoliofeedback");
+const feedbackRoutes = require("./routes/feedbackRoutes");
 
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/userRoutes');
@@ -114,6 +115,8 @@ app.use('/api/mcqquestion', mcqquestionRoutes);
 app.use('/api/compiler', compilerRoutes);
 app.use("/api", portfolioFeedback);
 app.use("/gemini", geminiRoutes);
+app.use("/api/feedback", feedbackRoutes);
+
 
 const PORT = process.env.PORT || 5000;
 
