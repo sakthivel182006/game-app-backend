@@ -4,11 +4,13 @@ const cors = require('cors');
 const path = require('path');
 const bodyParser = require('body-parser');
 const fs = require('fs');
+const portfolioFeedback=require("./routes/portfoliofeedback");
 
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/userRoutes');
 const mcqRoutes = require('./routes/mcqRoutes');
 const chesstournamentroutes = require('./routes/chesstournamentroutes');
+const githubRoutes =require("./routes/github.js");
 
 const mcqquestionRoutes = require('./routes/mcqQuestionRoutes');
 const testRoutes = require('./routes/testRoutes');
@@ -93,6 +95,7 @@ app.use('/api/teachers', teacherMcqTypeRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/coursestopics', courseTopicRoutes);
 app.use('/api/sourcecodes', sourceCodeRoutes);
+app.use("/api/github", githubRoutes);
 
 app.use('/api', useramountdistributionroutes);
 app.use('/api', paymentRoutes);
@@ -109,7 +112,7 @@ app.use('/api/mcqquestion', mcqquestionRoutes);
 
 
 app.use('/api/compiler', compilerRoutes);
-
+app.use("/api", portfolioFeedback);
 app.use("/gemini", geminiRoutes);
 
 const PORT = process.env.PORT || 5000;

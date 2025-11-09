@@ -9,7 +9,7 @@ export const askGemini = async (req, res) => {
     }
 
     // ✅ Use your free Gemini API key
-    const GEMINI_API_KEY = "AIzaSyBDVksaTJcnBxPsyyTi0dyjFjnAjBTcZXI";
+    const GEMINI_API_KEY = "AIzaSyBIp9n-yXn-TrfAAz8poJVS9t174nrahwo";
 
     // ✅ Free-tier supported endpoint (Gemini 2.5 Flash)
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
