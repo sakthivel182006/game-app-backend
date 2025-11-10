@@ -51,7 +51,7 @@ router.get("/contributions/:username", async (req, res) => {
     res.json(calendar);
   } catch (error) {
     console.error("❌ GitHub API error:", error.message);
-    res.status(500).json({ error: "Failed to fetch cibutions" });
+    res.status(500).json({ error: "Failed to fetch butions" });
   }
 });
 
