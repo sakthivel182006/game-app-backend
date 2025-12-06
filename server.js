@@ -47,12 +47,16 @@ const geminiRoutes = require('./routes/geminiRoutes.js');
 const compilerRoutes = require('./routes/compilerRoutes');
 
 
+const chessRoutes =require("./routes/chessRoutes.js");
+
+
+
+
 dotenv.config();
 connectDB();
 
 const app = express();
 
-// ===== CORS MIDDLEWARE =====
 app.use(cors({
   origin: '*', // Use specific frontend URL in production
   credentials: true
@@ -75,6 +79,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
+
+
+app.use("/api/chess", chessRoutes);
 
 
 app.use('/api/teachers', teacherMcqQuestionsubmissionRoutes);
@@ -102,7 +109,7 @@ app.use('/api', useramountdistributionroutes);
 app.use('/api', paymentRoutes);
 app.use('/api', authRoutes);
 app.use('/api', mcqRoutes);
-app.use('/api/chess', chesstournamentroutes);
+app.use('/api/chess2', chesstournamentroutes);
 
 app.use('/api', summaryroutes);
 app.use('/api/purchases', purchaseRoutes);
