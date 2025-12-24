@@ -10,7 +10,7 @@ const feedbackRoutes = require("./routes/feedbackRoutes");
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/userRoutes');
 const mcqRoutes = require('./routes/mcqRoutes');
-const chesstournamentroutes = require('./routes/chesstournamentroutes');
+// const chesstournamentroutes = require('./routes/chesstournamentroutes');
 const githubRoutes =require("./routes/github.js");
 
 const mcqquestionRoutes = require('./routes/mcqQuestionRoutes');
@@ -24,7 +24,7 @@ const teacherRoutes = require('./routes/teacherRoutes');
 
 const summaryroutes = require('./routes/summaryRoutes');
 const purchaseRoutes = require('./routes/purchaseRoutes');
-const chesstournament = require('./models/chesstournament');
+// const chesstournament = require('./models/chesstournament');
 
 const courseRoutes = require('./routes/courseRoutes');
 const courseTopicRoutes = require('./routes/courseTopicRoutes');
@@ -47,7 +47,7 @@ const geminiRoutes = require('./routes/geminiRoutes.js');
 const compilerRoutes = require('./routes/compilerRoutes');
 
 
-const chessRoutes =require("./routes/chessRoutes.js");
+// const chessRoutes =require("./routes/chessRoutes.js");
 
 
 const countryRoutes = require("./routes/countryRoutes");
@@ -113,7 +113,7 @@ app.use('/api', useramountdistributionroutes);
 app.use('/api', paymentRoutes);
 app.use('/api', authRoutes);
 app.use('/api', mcqRoutes);
-app.use('/api/chess2', chesstournamentroutes);
+// app.use('/api/chess2', chesstournamentroutes);
 
 app.use('/api', summaryroutes);
 app.use('/api/purchases', purchaseRoutes);
