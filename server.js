@@ -50,6 +50,8 @@ const compilerRoutes = require('./routes/compilerRoutes');
 const chessRoutes =require("./routes/chessRoutes.js");
 
 
+const countryRoutes = require("./routes/countryRoutes");
+
 
 
 dotenv.config();
@@ -79,6 +81,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/api/countrydetails", countryRoutes);
+
 
 
 app.use("/api/chess", chessRoutes);
