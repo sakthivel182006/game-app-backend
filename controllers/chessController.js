@@ -1,7 +1,7 @@
 const GameResult = require("../models/GameResult");
 
-// 🔥 DIRECT TOKEN (you asked for this)
-const TOKEN = "lip_1m3RtNftGzuQmgGrqf7c";
+// ✅ SAFE TOKEN (from .env)
+const TOKEN = process.env.LICHESS_TOKEN;
 
 // =====================================================
 //  BOT ACCOUNT UPGRADE
@@ -13,8 +13,8 @@ exports.upgradeToBot = async (req, res) => {
     const response = await fetch(url, {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${TOKEN}`,
-        "Accept": "application/json",
+        Authorization: `Bearer ${TOKEN}`,
+        Accept: "application/json",
         "Content-Type": "application/json"
       }
     });
@@ -27,13 +27,9 @@ exports.upgradeToBot = async (req, res) => {
       });
     }
 
-    const data = JSON.parse(text);
-    console.log("🔥 Bot Upgrade Response:", data);
-
-    return res.json(data);
+    return res.json(JSON.parse(text));
 
   } catch (error) {
-    console.error("Upgrade Error:", error);
     res.status(500).json({ error: "Upgrade request failed" });
   }
 };
@@ -47,8 +43,8 @@ exports.createRandomGame = async (req, res) => {
   const response = await fetch(url, {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${TOKEN}`,
-      "Accept": "application/json",
+      Authorization: `Bearer ${TOKEN}`,
+      Accept: "application/json",
       "Content-Type": "application/x-www-form-urlencoded"
     },
     body: "clock.limit=300&clock.increment=0"
@@ -60,9 +56,7 @@ exports.createRandomGame = async (req, res) => {
     return res.json({ error: "Account must be BOT to create games." });
   }
 
-  const data = JSON.parse(text);
-  console.log("Random Opponent:", data);
-  res.json(data);
+  res.json(JSON.parse(text));
 };
 
 // =====================================================
@@ -75,9 +69,8 @@ exports.createAIgame = async (req, res) => {
   const response = await fetch(url, {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${TOKEN}`,
-      "Accept": "application/json",
-      "Content-Type": "application/json"
+      Authorization: `Bearer ${TOKEN}`,
+      Accept: "application/json"
     }
   });
 
@@ -87,9 +80,7 @@ exports.createAIgame = async (req, res) => {
     return res.json({ error: "Account must be BOT to challenge AI." });
   }
 
-  const data = JSON.parse(text);
-  console.log("AI Game:", data);
-  res.json(data);
+  res.json(JSON.parse(text));
 };
 
 // =====================================================
@@ -101,8 +92,8 @@ exports.createPrivateGame = async (req, res) => {
   const response = await fetch(url, {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${TOKEN}`,
-      "Accept": "application/json",
+      Authorization: `Bearer ${TOKEN}`,
+      Accept: "application/json",
       "Content-Type": "application/x-www-form-urlencoded"
     },
     body: "clock.limit=600&clock.increment=5"
@@ -114,9 +105,7 @@ exports.createPrivateGame = async (req, res) => {
     return res.json({ error: "Account must be BOT to create private game." });
   }
 
-  const data = JSON.parse(text);
-  console.log("Private Game:", data);
-  res.json(data);
+  res.json(JSON.parse(text));
 };
 
 // =====================================================
@@ -124,15 +113,13 @@ exports.createPrivateGame = async (req, res) => {
 // =====================================================
 exports.createChallenge = async (req, res) => {
   const { username } = req.body;
-
   const url = `https://lichess.org/api/challenge/${username}`;
 
   const response = await fetch(url, {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${TOKEN}`,
-      "Accept": "application/json",
-      "Content-Type": "application/json"
+      Authorization: `Bearer ${TOKEN}`,
+      Accept: "application/json"
     }
   });
 
@@ -142,9 +129,7 @@ exports.createChallenge = async (req, res) => {
     return res.json({ error: "Account must be BOT to challenge users." });
   }
 
-  const data = JSON.parse(text);
-  console.log("Challenge User:", data);
-  res.json(data);
+  res.json(JSON.parse(text));
 };
 
 // =====================================================
@@ -156,30 +141,18 @@ exports.streamGame = async (req, res) => {
 
   const response = await fetch(url, {
     headers: {
-      "Authorization": `Bearer ${TOKEN}`,
-      "Accept": "application/json",
-      "Content-Type": "application/json"
+      Authorization: `Bearer ${TOKEN}`,
+      Accept: "application/json"
     }
   });
 
-  console.log("♟ Streaming Game:", gameId);
-
   for await (const chunk of response.body) {
     const line = chunk.toString().trim();
-    if (!line) continue;
-
     if (!line.startsWith("{")) continue;
 
-    let data;
-    try {
-      data = JSON.parse(line);
-    } catch {
-      continue;
-    }
+    const data = JSON.parse(line);
 
     if (data.type === "gameFinish") {
-      console.log("✔ GAME FINISHED:", data);
-
       const result = new GameResult({
         gameId,
         winner: data.winner || "draw",
@@ -188,37 +161,34 @@ exports.streamGame = async (req, res) => {
       });
 
       await result.save();
-
       return res.json({ success: true, result });
     }
   }
 };
-// ========== GET LICHESS ACCOUNT INFO ==========
+
+// =====================================================
+//  GET ACCOUNT INFO
+// =====================================================
 exports.getAccountInfo = async (req, res) => {
   const url = "https://lichess.org/api/account";
 
   try {
     const response = await fetch(url, {
-      method: "GET",
       headers: {
-        "Authorization": `Bearer ${TOKEN}`,
-        "Accept": "application/json"
+        Authorization: `Bearer ${TOKEN}`,
+        Accept: "application/json"
       }
     });
 
     const text = await response.text();
 
     if (text.startsWith("<!DOCTYPE")) {
-      return res.json({ error: "Token invalid or account login required." });
+      return res.json({ error: "Token invalid." });
     }
 
-    const data = JSON.parse(text);
-    console.log("Account Info:", data);
-
-    return res.json(data);
+    res.json(JSON.parse(text));
 
   } catch (error) {
-    console.error("Account error:", error);
     res.status(500).json({ error: "Failed to fetch account" });
   }
 };

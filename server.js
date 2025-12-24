@@ -87,8 +87,6 @@ app.use("/api/countrydetails", countryRoutes);
 
 
 
-app.use("/api/chess", chessRoutes);
-
 
 app.use('/api/teachers', teacherMcqQuestionsubmissionRoutes);
 
